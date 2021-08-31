@@ -47,14 +47,11 @@ jobs:
       with:
         name: build-artifact
     
-    - name: Git repo creation
-      run: rm -rf .git
-      run: git init
-    
-    - name: Git file addition
-      run: git add .
-      run: git config user.name "riri"
-      run: git commit -m "bad commit"
+    - run: rm -rf .git
+    - run: git init
+    - run: git add .
+    - run: git config user.name "riri"
+    - run: git commit -m "bad commit"
     
     - name: Heroku login credentials
       run: |
