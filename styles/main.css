@@ -1,0 +1,14 @@
+body {
+    /* remove margins and scroll bars */
+    margin: 0;
+    /* overflow: hidden; */
+    background-color: cadetblue;
+}
+
+#threejs-canvas {
+    /* canvas take up full page */
+    position: absolute;
+    background-color: skyblue;
+    height: 100%;
+    width: 100%;
+}

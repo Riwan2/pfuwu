@@ -1,0 +1,79 @@
+# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Build and deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+  
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Node install packets
+      run: npm ci
+
+    - name: Snowpack build
+      run: npx snowpack build
+    
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-artifact
+        path: build/
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download build artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: build-artifact
+    
+    - name: Git repo creation
+      run: rm -rf .git
+      run: git init
+    
+    - name: Git file addition
+      run: git add .
+      run: git config user.name "riri"
+      run: git commit -m "bad commit"
+    
+    - name: Heroku login credentials
+      run: |
+          cat > ~/.netrc <<EOF
+            machine api.heroku.com
+              login $HEROKU_EMAIL
+              password $HEROKU_API_KEY
+            machine git.heroku.com
+              login $HEROKU_EMAIL
+              password $HEROKU_API_KEY
+          EOF
+      env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+
+    - name: Add Heroku remote
+      run: heroku git:remote --app $HEROKU_APP_NAME
+      env:
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+
+    - name: Push to Heroku
+      run: git push --force heroku master

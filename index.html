@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document</title>
+
+    <!-- styles -->
+    <link href="./styles/main.css" rel="stylesheet" type="text/css">
+    <link href="./styles/chat.css" rel="stylesheet" type="text/css">
+
+    <!-- scripts -->    
+    <script type="module" src="src/client.js"></script>
+
+    <!-- world -->
+    <script type="module" src="src/game/terrain.js"></script>
+    <script type="module" src="src/game/world.js"></script>
+    <script type="module" src="src/game/minions.js"></script>
+
+    <!-- chat -->
+    <script type="module" src="src/chat.js"></script>  
+
+    <!-- favicon bug -->
+    <link rel="shortcut icon" href="#">
+</head>
+
+<body>
+    <div id="threejs-canvas" tabindex="1"></div>
+
+    <!-- chat part -->
+    <div id="chat">
+        <ul id="message-list"></ul>
+        <div id="message-text-wrapper">
+            <div id="message-text" contenteditable="true"></div>
+        </div>
+    </div>
+</body>
+</html>
