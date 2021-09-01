@@ -7,7 +7,7 @@ module.exports = {
     /* ... */
   },
   optimize: {
-    bundle: false,
+    bundle: true,
     minify: true,
   },
   plugins: [

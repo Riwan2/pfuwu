@@ -2,18 +2,18 @@ import { AmbientLight, Clock, Color, PerspectiveCamera, PointLight, Scene, WebGL
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { chatFocus, scrollDown } from "../chat";
+import { chatFocus, scrollDown } from "../chat/chat";
 
 // import * as TWEEN from '@tweenjs/tween.js';
 import { Terrain } from "./terrain";
-import { MinionManager } from "./minions";
 
 import Stats from 'three/examples/jsm/libs/stats.module.js';
-import { PlayerController } from "./player-controller";
-import { InputManager } from "./input";
-import { ThirdPersonCamera } from "./third-person-camera";
-import { sendPlayer } from "../client";
-import { Player } from "./player";
+import { PlayerController } from "./player/player-controller";
+import { InputManager } from "./input/input";
+import { ThirdPersonCamera } from "./player/third-person-camera";
+import { sendPlayer } from "../client/client";
+import { Player } from "./player/player";
+import { PlayerManager } from "./player-manager";
 
 /* THREE JS */
 const container = document.getElementById("threejs-canvas");
@@ -73,9 +73,6 @@ async function main()
     terrain.receiveShadow = true;
     scene.add(terrain);
 
-    // minions
-    var minionManager = new MinionManager(scene);
-
     // stats
     const stats = new Stats();
     document.body.appendChild(stats.dom);
@@ -94,6 +91,9 @@ async function main()
             chatFocus(event);
         }
     }
+
+    // players manager
+    const playerManager = new PlayerManager(scene);
 
     // Third person camera
     const thirdPersonCamera = new ThirdPersonCamera(camera);
@@ -118,13 +118,15 @@ async function main()
         playerController.update(dt);
         sendPlayer(playerController.minion);
 
-        minionManager.update();
+        // player manager
+        playerManager.update(dt);
 
         if (terrain.mouseIntersect.active) {
             const intersect = terrain.mouseIntersect;
             const point = intersect.point;
             const normal = intersect.normal;
             const tileX = intersect.tileX;
+
             const tileY = intersect.tileY;
 
             // const quat = new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), normal);

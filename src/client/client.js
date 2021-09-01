@@ -1,6 +1,7 @@
 // client part
 import { io } from "socket.io-client/dist/socket.io.js";
 import { Object3D } from "three";
+import { msgSystem, msgUser } from "../chat/chat";
 
 var recoMaxTry = 2;
 var recoTry = -1;
@@ -20,8 +21,6 @@ if (window.location.port == "8080" && window.location.hostname == "localhost") {
         autoConnect: false,
     });
 }
-
-import { msgSystem, msgUser } from "./chat"
 
 function initConnection()
 {
@@ -88,7 +87,7 @@ socket.on("chat-message", (msg) => {
  */
 function sendPlayer(player) 
 {
-    socket.emit("player-move", { 'pos': player.position, 'rot': player.rotation });
+    socket.emit("player-move", { "matrix": player.matrixWorld });
 }
 
 var serverPlayers = [];

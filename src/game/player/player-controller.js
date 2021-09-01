@@ -1,6 +1,5 @@
 import { Vector3 } from "three";
-import { InputManager } from "./input";
-import { Minion } from "./minions";
+import { InputManager } from "../input/input";
 
 var velocity = new Vector3(0, 0, 0);
 var finalVelocity = new Vector3(0, 0, 0);
@@ -15,7 +14,6 @@ class PlayerController {
 
     /**
      * 
-     * @param {Minion} minion 
      */
     constructor(minion)
     {

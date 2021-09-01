@@ -1,15 +1,19 @@
 import { Object3D, PerspectiveCamera, Vector3 } from "three";
 import { clamp, lerp } from "three/src/math/MathUtils";
-import { InputManager } from "./input";
+import { InputManager } from "../input/input";
 
 const angleAroundSpeed = 3;
+const angleAroundDamping = 0.1;
 var nextAngleAround = 0;
 var angleAroundOffset = 0;
 
 const angleYSpeed = 1;
+const angleYDamping = 0.1;
 var nextAngleY = 0.4;
 var angleYOffset = 0;
 
+const minDistance = 10;
+const maxDistance = 50;
 var nextDistance = 0;
 
 class ThirdPersonCamera {
@@ -48,10 +52,10 @@ class ThirdPersonCamera {
         }
 
         nextDistance = this.distance - mouse.scroll * dt;
-        this.distance = clamp(nextDistance, 10, 50);
+        this.distance = clamp(nextDistance, minDistance, maxDistance);
 
-        this.angleAround = lerp(this.angleAround, nextAngleAround, 0.1);
-        this.angleY = lerp(this.angleY, nextAngleY, 0.1);
+        this.angleAround = lerp(this.angleAround, nextAngleAround, angleAroundDamping);
+        this.angleY = lerp(this.angleY, nextAngleY, angleYDamping);
 
         var rotatedPos = new Vector3();
         const horizontalDistance = Math.cos(this.angleY) * this.distance;
