@@ -7,7 +7,6 @@ const http = require('http');
 const server = http.createServer(app);
 
 const { Server } = require("socket.io");
-const { Object3D } = require('three');
 const io = new Server(server, {
     cors: {
         origin: "*"
@@ -30,9 +29,6 @@ var players = {};
 
 io.on("connection", socket => {
     io.emit("user-connection", { id: socket.id });
-
-    const object = new Object3D();
-    console.log(object);
 
     socket.on("disconnect", () => {
         io.emit("user-disconnection", { id: socket.id });
