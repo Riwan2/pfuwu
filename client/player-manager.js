@@ -1,5 +1,5 @@
 import { BoxGeometry, Color, InstancedMesh, Matrix4, MeshStandardMaterial, Scene, StreamDrawUsage } from "three";
-import { serverPlayers } from "../client/client";
+import { serverPlayers } from "./network/client";
 
 /**
  * @type {InstancedMesh}
@@ -29,7 +29,6 @@ class PlayerManager {
      */
     update(dt)
     {
-        if (!serverPlayers) return;
         // number of instances renderered, can't exceed maxPlayersNumber
         const nbPlayers = Math.min(serverPlayers.length, maxPlayersNumber);
         instancedMesh.count = nbPlayers;

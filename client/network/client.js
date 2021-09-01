@@ -85,6 +85,7 @@ socket.on("chat-message", (msg) => {
  * 
  * @param {Object3D} player 
  */
+
 function sendPlayer(player) 
 {
     socket.emit("player-move", { "matrix": player.matrixWorld });
@@ -96,9 +97,11 @@ socket.on("players-move", (event) => {
     serverPlayers = [];
 
     for (const key in event) {
-        if (key != socket.id) {
-            serverPlayers.push(event[key]);
-        }
+        if (key === socket.id) continue;
+        const player = event[key];
+
+        if (player.matrix)
+            serverPlayers.push(player.matrix);
     }
 });
 

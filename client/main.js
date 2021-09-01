@@ -2,8 +2,7 @@ import { AmbientLight, Clock, Color, PerspectiveCamera, PointLight, Scene, WebGL
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { chatFocus, scrollDown } from "../chat/chat";
-
+import { chatFocus, scrollDown } from "./chat/chat";
 // import * as TWEEN from '@tweenjs/tween.js';
 import { Terrain } from "./terrain";
 
@@ -11,7 +10,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js';
 import { PlayerController } from "./player/player-controller";
 import { InputManager } from "./input/input";
 import { ThirdPersonCamera } from "./player/third-person-camera";
-import { sendPlayer } from "../client/client";
+import { sendPlayer } from "./network/client";
 import { Player } from "./player/player";
 import { PlayerManager } from "./player-manager";
 

@@ -2,8 +2,8 @@
     chat
 */
 
-import { sendChatMessage } from "../client/client";
-import { containerFocus } from "../game/main";
+import { sendChatMessage } from "../network/client";
+import { containerFocus } from "../main";
 
 const textInput = document.getElementById("message-text");
 const messageList = document.getElementById("message-list");

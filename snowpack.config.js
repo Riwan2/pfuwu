@@ -23,7 +23,7 @@ module.exports = {
     /* ... */
   },
   exclude: [ 
-    "**/src/client/stress-test.js",
+    "**/client/network/stress-test.js",
     "**/build/**",
     "**/node_modules/**"
   ]
