@@ -1,5 +1,6 @@
-const express = require('express');
+
 const path = require('path');
+const express = require('express');
 
 const app = express();
 const http = require('http');
@@ -31,6 +32,7 @@ io.on("connection", socket => {
     io.emit("user-connection", { id: socket.id });
 
     const object = new Object3D();
+    console.log(object);
 
     socket.on("disconnect", () => {
         io.emit("user-disconnection", { id: socket.id });

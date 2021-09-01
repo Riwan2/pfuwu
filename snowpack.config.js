@@ -7,8 +7,8 @@ module.exports = {
     /* ... */
   },
   optimize: {
-    bundle: true,
     minify: true,
+    bundle: true,
   },
   plugins: [
     /* ... */
@@ -22,4 +22,9 @@ module.exports = {
   buildOptions: {
     /* ... */
   },
+  exclude: [ 
+    "**/src/client/stress-test.js",
+    "**/build/**",
+    "**/node_modules/**"
+  ]
 };

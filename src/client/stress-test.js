@@ -1,4 +1,4 @@
-const { io } = require("socket.io-client");
+import { io } from "socket.io-client/dist/socket.io";
 
 const URL = "http://localhost:3000";
 const MAX_CLIENTS = 2000;
