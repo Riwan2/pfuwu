@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "build": "snowpack build",
     "dev": "snowpack dev"
   },
   "author": "Riwan",

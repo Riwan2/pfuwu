@@ -9,6 +9,7 @@ module.exports = {
   optimize: {
     minify: true,
     bundle: true,
+    sourcemap: false,
   },
   plugins: [
     /* ... */

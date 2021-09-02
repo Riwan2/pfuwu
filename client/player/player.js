@@ -7,7 +7,7 @@ class Player extends Mesh {
         super();
 
         this.geometry = new BoxGeometry(2, 5);
-        this.material = new MeshStandardMaterial({color: new Color("yellow")});
+        this.material = new MeshStandardMaterial({color: new Color("green")});
 
         this.height = height;
         this.position.y = height / 2;
