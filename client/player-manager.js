@@ -1,5 +1,5 @@
 import { BoxGeometry, Color, InstancedMesh, Matrix4, MeshStandardMaterial, Scene, StreamDrawUsage } from "three";
-import { serverPlayers } from "./network/client";
+import { NetworkManager } from "./network/network-manager";
 
 /**
  * @type {InstancedMesh}
@@ -30,13 +30,21 @@ class PlayerManager {
     update(dt)
     {
         // number of instances renderered, can't exceed maxPlayersNumber
-        const nbPlayers = Math.min(serverPlayers.length, maxPlayersNumber);
+        const nbPlayers = Math.min(NetworkManager.players.length, maxPlayersNumber);
         instancedMesh.count = nbPlayers;
+
+        if (nbPlayers == 0) return;
+        
+        // populate instanced mesh matrices
         for (let i = 0; i < nbPlayers; i++) {
-            const playerData = serverPlayers[i];
-            const mat = new Matrix4().fromArray(playerData.matrix.elements);
-            instancedMesh.setMatrixAt(i, mat);
+            const playerData = NetworkManager.players[i];
+            const matrix = playerData.matrix;
+            if (matrix) {
+                const mat = new Matrix4().fromArray(matrix.elements);
+                instancedMesh.setMatrixAt(i, mat);
+            }
         }
+
         instancedMesh.instanceMatrix.needsUpdate = true;
     }
 }

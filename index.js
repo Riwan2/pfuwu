@@ -11,7 +11,7 @@ const httpServer = http.createServer(app);
 const { Server } = require("socket.io");
 
 // socket.io server initialisation
-io = new Server(httpServer, {
+module.exports.io = new Server(httpServer, {
     cors: {
         origin: "*"
     },
@@ -36,8 +36,3 @@ const tickRate = 20;
 setInterval(() => {
     GameServer.update();
 }, tickRate);
-
-module.exports = { io };
-
-// handle io event and send them to game server
-require("./server/handle-event.js");

@@ -1,6 +1,8 @@
-import { io } from "socket.io-client/dist/socket.io";
+import { io } from "socket.io-client/dist/socket.io.js";
 
-const URL = "http://localhost:3000";
+var URL = "";
+if (window.location.port == "8080" && window.location.hostname == "localhost")
+  URL = "http://localhost:3000";
 const MAX_CLIENTS = 2000;
 const POLLING_PERCENTAGE = 0.0;
 const CLIENT_CREATION_INTERVAL_IN_MS = 5;
@@ -22,14 +24,14 @@ const transports = ["websocket"];
   });
 
   setInterval(() => {
-    socket.emit("client to server event");
+    socket.emit("stress-test");
   }, EMIT_INTERVAL_IN_MS);
   
   socket.on("connect_error", (err) => {
       console.log(err.message);
     })
 
-  socket.on("server to client event", () => {
+  socket.on("stress-test", () => {
     packetsSinceLastReport++;
   });
 

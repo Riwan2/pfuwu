@@ -1,8 +1,7 @@
 import { Vector2 } from "three";
 
 var inputMap = {};
-var keyState = {};
-var lastKeyState = {};
+var lastInputMap = {};
 
 class Mouse
 {
@@ -28,13 +27,13 @@ class InputManager
         container.addEventListener("wheel", handleMouseScroll, false);
     }
 
-    static registerInput(name, keyAlias)
+    static registerInput(name, keyAlias, preventDefault = false)
     {
         for (const key in inputMap) {
             if (key === name)
                 throw Error("input already registered", name);
         }
-        inputMap[name] = keyAlias;
+        inputMap[name] = { "keyAlias": keyAlias, "down": false, "preventDefault": preventDefault };
     }
 
     static keyDown(inputName)
@@ -44,11 +43,7 @@ class InputManager
             console.error("input name doesn't exist: ", inputName);
             return false;
         }
-        for (const key of input) {
-            if (!!(keyState[key]))
-                return true;
-        }
-        return false;
+        return input.down;
     }
 
     static keyPressed(inputName)
@@ -58,20 +53,19 @@ class InputManager
             console.error("input name doesn't exist: ", inputName);
             return false;
         }
-        for (const key of input) {
-            if (!!(keyState[key]) && !(lastKeyState[key]))
-                return true;
-        }
-        return false;
+        var lastInput = lastInputMap[inputName];
+        return (input.down && !lastInput);
     }
 
     static update()
     {
-        lastKeyState = {};
-        for (const key in keyState) {
-            lastKeyState[key] = keyState[key];
-        }
         this.mouse.scroll = 0;
+
+        lastInputMap = {};
+        for (const key in inputMap) {
+            if (inputMap[key].down)
+                lastInputMap[key] = true;
+        }
     }
 }
 
@@ -114,13 +108,33 @@ function handleMouseMove(event, container)
 function handleKeyDown(event)
 {
     if (!event.key) return;
-    keyState[event.code] = true;
+
+    for (const key in inputMap) {
+        const input = inputMap[key];
+        for (const code of input.keyAlias) {
+            if (event.code == code) {
+                if (input.preventDefault) event.preventDefault();
+                input.down = true;
+                return;
+            }
+        }
+    }
 }
 
 function handleKeyUp(event)
 {
     if (!event.key) return;
-    delete keyState[event.code];
+
+    for (const key in inputMap) {
+        const input = inputMap[key];
+        for (const code of input.keyAlias) {
+            if (event.code == code) {
+                if (input.preventDefault) event.preventDefault();
+                input.down = false;
+                return;
+            }
+        }
+    }
 }
 
 export { InputManager };

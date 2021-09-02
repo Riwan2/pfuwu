@@ -2,7 +2,7 @@ import { AmbientLight, Clock, Color, PerspectiveCamera, PointLight, Scene, WebGL
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { chatFocus, scrollDown } from "./chat/chat";
+import { Chat } from "./chat/chat";
 // import * as TWEEN from '@tweenjs/tween.js';
 import { Terrain } from "./terrain";
 
@@ -10,12 +10,12 @@ import Stats from 'three/examples/jsm/libs/stats.module.js';
 import { PlayerController } from "./player/player-controller";
 import { InputManager } from "./input/input";
 import { ThirdPersonCamera } from "./player/third-person-camera";
-import { sendPlayer } from "./network/client";
 import { Player } from "./player/player";
 import { PlayerManager } from "./player-manager";
+import { NetworkManager } from "./network/network-manager";
 
 /* THREE JS */
-const container = document.getElementById("threejs-canvas");
+const gameContainer = document.getElementById("threejs-canvas");
 
 function setSize(camera, renderer, container) 
 {
@@ -29,18 +29,13 @@ async function load(scene)
 {
 }
 
-function containerFocus()
-{
-    container.focus();
-}
-
 async function main() 
 {
     const renderer = new WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.physicallyCorrectLights = true;
     renderer.shadowMap.enabled = true;
-    container.appendChild(renderer.domElement);
+    gameContainer.appendChild(renderer.domElement);
 
     const scene = new Scene();
     scene.background = new Color('cadetblue');
@@ -52,10 +47,10 @@ async function main()
     // controls.enableDamping = true;
 
     // resize
-    setSize(camera, renderer, container);
+    setSize(camera, renderer, gameContainer);
     window.addEventListener('resize', () => {
-        setSize(camera, renderer, container);
-        scrollDown();
+        setSize(camera, renderer, gameContainer);
+        Chat.scrollDown();
     })
 
     // light and scene stuff
@@ -77,25 +72,21 @@ async function main()
     document.body.appendChild(stats.dom);
 
     // input
-    InputManager.init(container);
+    InputManager.init(gameContainer);
 
     // player controller
     const player = new Player(4);
     scene.add(player);
     const playerController = new PlayerController(player);
 
-    // focus chat
-    container.onkeypress = (event) => {
-        if (event.key == 'Enter') {
-            chatFocus(event);
-        }
-    }
-
     // players manager
     const playerManager = new PlayerManager(scene);
 
     // Third person camera
     const thirdPersonCamera = new ThirdPersonCamera(camera);
+
+    // chat
+    InputManager.registerInput("focus-chat", ["Enter", "Tab"]);
 
     // load
     await load(scene);
@@ -110,12 +101,17 @@ async function main()
         const dt = clock.getDelta() * speed;
         // TWEEN.update();
 
+        // focus chat
+        if (InputManager.keyPressed("focus-chat")) {
+            Chat.focus();
+        }
+
         // controls.update(dt);
         terrain.mouseRaycast(camera);
 
         // player controller
         playerController.update(dt);
-        sendPlayer(playerController.minion);
+        NetworkManager.sendPlayerInfo(playerController.minion)
 
         // player manager
         playerManager.update(dt);
@@ -151,4 +147,4 @@ main().catch((err) => {
     console.log(err);
 })
 
-export { containerFocus }
+export { gameContainer }
