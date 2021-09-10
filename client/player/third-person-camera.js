@@ -38,7 +38,7 @@ class ThirdPersonCamera {
      */    
     update(dt, target)
     {
-        var rotationY = target.rotation.y + this.angleAround;
+        var rotationY = target.rotation.y + this.angleAround + Math.PI;
 
         const mouse = InputManager.mouse;
 

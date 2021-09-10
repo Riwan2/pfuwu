@@ -1,5 +1,5 @@
-import { AmbientLight, Clock, Color, PerspectiveCamera, PointLight, Scene, WebGLRenderer} from "three";
-// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { AmbientLight, CameraHelper, Clock, Color, DirectionalLight, PerspectiveCamera, PointLight, PointLightHelper, Scene, SkeletonHelper, SpotLight, Vector2, WebGLRenderer} from "three";
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { Chat } from "./chat/chat";
@@ -13,6 +13,7 @@ import { ThirdPersonCamera } from "./player/third-person-camera";
 import { Player } from "./player/player";
 import { PlayerManager } from "./player-manager";
 import { NetworkManager } from "./network/network-manager";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 
 /* THREE JS */
 const gameContainer = document.getElementById("threejs-canvas");
@@ -25,18 +26,36 @@ function setSize(camera, renderer, container)
     renderer.setPixelRatio(window.devicePixelRatio);
 }
 
-async function load(scene)
+const models = {
+    player: { url: "chibi-character.glb" },
+};
+
+async function load_gltf(scene)
 {
+    const loader = new GLTFLoader();
+    loader.setPath("../assets/gltf/");
+
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('three/examples/js/libs/draco/');
+    loader.setDRACOLoader(dracoLoader);
+
+    for (const modelName in models) {
+        const model = models[modelName];
+        const fileName = model.url;
+        model.gltf = await loader.loadAsync(fileName);
+    }
 }
 
 async function main() 
 {
+    // renderer
     const renderer = new WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.physicallyCorrectLights = true;
     renderer.shadowMap.enabled = true;
     gameContainer.appendChild(renderer.domElement);
 
+    // scene & window
     const scene = new Scene();
     scene.background = new Color('cadetblue');
     const camera = new PerspectiveCamera(75,
@@ -54,12 +73,12 @@ async function main()
     })
 
     // light and scene stuff
-    const ambientLight = new AmbientLight('white', 1);
+    const ambientLight = new AmbientLight('white', 1);  
     scene.add(ambientLight);
 
-    const pointLight = new PointLight('white', 8);
-    pointLight.castShadow = true;
-    pointLight.position.set(5, 5, 5);
+    const pointLight = new PointLight('white', 8, 300);
+    pointLight.position.set(5, 10, 5);
+
     scene.add(pointLight);
 
     // terrain
@@ -71,11 +90,14 @@ async function main()
     const stats = new Stats();
     document.body.appendChild(stats.dom);
 
+    // load
+    await load_gltf(scene);
+
     // input
     InputManager.init(gameContainer);
 
     // player controller
-    const player = new Player(4);
+    const player = new Player();
     scene.add(player);
     const playerController = new PlayerController(player);
 
@@ -87,9 +109,6 @@ async function main()
 
     // chat
     InputManager.registerInput("focus-chat", ["Enter", "Tab"]);
-
-    // load
-    await load(scene);
 
     // update settings
     const clock = new Clock();
@@ -111,7 +130,7 @@ async function main()
 
         // player controller
         playerController.update(dt);
-        NetworkManager.sendPlayerInfo(playerController.minion)
+        NetworkManager.sendPlayerInfo(player);
 
         // player manager
         playerManager.update(dt);
@@ -134,9 +153,10 @@ async function main()
         }
 
         // camera
-        thirdPersonCamera.update(dt, playerController.minion);
+        thirdPersonCamera.update(dt, player);
 
         renderer.render(scene, camera);
+
         stats.update();
         InputManager.update();
     }
@@ -147,4 +167,4 @@ main().catch((err) => {
     console.log(err);
 })
 
-export { gameContainer }
+export { gameContainer, models }

@@ -1,5 +1,6 @@
 import { Vector3 } from "three";
 import { InputManager } from "../input/input";
+import { Player } from "./player"
 
 var velocity = new Vector3(0, 0, 0);
 var finalVelocity = new Vector3(0, 0, 0);
@@ -9,13 +10,18 @@ const speed = 50;
 const acceleration = 0.6;
 const friction = 0.2;
 
+
 class PlayerController {
-    minion;
+    /**
+     * @type {Player}
+     */
+    player;
 
     /**
      * 
+     * @param {Player} player 
      */
-    constructor(minion)
+    constructor(player)
     {
         InputManager.registerInput("player-up", [ "KeyW", "ArrowUp" ]);
         InputManager.registerInput("player-down", [ "KeyS", "ArrowDown" ]);
@@ -25,7 +31,7 @@ class PlayerController {
         InputManager.registerInput("player-turn-right", [ "KeyQ" ]);
         InputManager.registerInput("player-turn-left", [ "KeyE" ]);
 
-        this.minion = minion;
+        this.player = player;
     }
 
     update(dt)
@@ -40,25 +46,28 @@ class PlayerController {
         }
         
         if (InputManager.keyDown("player-up")) {
-            frameVelocity.z = -1;
-        } else if (InputManager.keyDown("player-down")) {
             frameVelocity.z = 1;
+        } else if (InputManager.keyDown("player-down")) {
+            frameVelocity.z = -1;
         }
 
         if (InputManager.keyDown("player-right")) {
-            frameVelocity.x = 1;
-        } else if (InputManager.keyDown("player-left")) {
             frameVelocity.x = -1;
+        } else if (InputManager.keyDown("player-left")) {
+            frameVelocity.x = 1;
         }
 
         rotationVelocity *= rotationSpeed * dt;
-        this.minion.rotation.y = (this.minion.rotation.y + rotationVelocity) % (2 * Math.PI);
+        this.player.rotation.y = (this.player.rotation.y + rotationVelocity) % (2 * Math.PI);
 
         frameVelocity.normalize();
+
+        this.player.currentState = this.player.states.idle;
 
         if (frameVelocity.length() > 0) { // is moving
             // apply acceleration
             velocity.lerp(frameVelocity, acceleration);
+            this.player.currentState = this.player.states.running;
         }
 
         // apply friction
@@ -66,10 +75,12 @@ class PlayerController {
 
         finalVelocity = velocity.clone();
         finalVelocity.multiplyScalar(speed * dt);
-        finalVelocity.applyQuaternion(this.minion.quaternion);
+        finalVelocity.applyQuaternion(this.player.quaternion);
 
-        this.minion.position.add(finalVelocity);
-        this.minion.matrixWorldNeedsUpdate = true;
+        this.player.position.add(finalVelocity);
+        this.player.matrixWorldNeedsUpdate = true;
+
+        this.player.update(dt);
     }
 }
 

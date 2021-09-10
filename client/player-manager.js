@@ -1,5 +1,6 @@
 import { BoxGeometry, Color, InstancedMesh, Matrix4, MeshStandardMaterial, Scene, StreamDrawUsage } from "three";
 import { NetworkManager } from "./network/network-manager";
+import { Player } from "./player/player";
 
 /**
  * @type {InstancedMesh}
@@ -45,6 +46,7 @@ class PlayerManager {
             }
         }
 
+        // update the instance matrix buffer
         instancedMesh.instanceMatrix.needsUpdate = true;
     }
 }
