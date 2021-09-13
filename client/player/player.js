@@ -4,8 +4,6 @@ import { models } from "../main";
 
 class Player extends Group {
     
-    currentState = null;
-    lastState = null;
     currentAction = null;
     lastAction = null;
 
@@ -18,7 +16,6 @@ class Player extends Group {
 
         this._initMesh();
         this._initAnimation(gltf.animations);
-        this._initState();
     }
 
     /*
@@ -47,30 +44,8 @@ class Player extends Group {
 
         animations.forEach((clip) => {
             const action = this.mixer.clipAction(clip);
-
-            switch (clip.name) {
-                case "TPose":
-                    action.loop = LoopOnce;
-                    action.clampWhenFinished = true;
-                    break;
-
-                case "Goofy-Running":
-                    break;
-            }
-
-            this.actions[clip.name] = action
+            this.actions[clip.name] = action;
         });
-
-        this.currentAction = this.actions["TPose"];
-        this.currentAction.play();
-    }
-
-    _initState()
-    {
-        this.states = { idle: "TPose", running: "Goofy-Running" };
-
-        this.currentState = this.states.idle;
-        this.lastState = this.currentState;
     }
 
     /*
@@ -79,42 +54,32 @@ class Player extends Group {
 
     update(dt)
     {
-        this._updateState();
         this.mixer.update(dt);
-    }
-
-    /*
-        Update State
-    */
-
-    _updateState()
-    {
-        if (this.lastState !== this.currentState) {
-           this._fadeToAction(this.currentState, 0.2);
-        }
-
-        this.lastState = this.currentState;
     }
 
     /*
         Action fading
     */
 
-    _fadeToAction(name, duration) 
+    setAction(name)
     {
         this.lastAction = this.currentAction;
         this.currentAction = this.actions[name];
+    }
 
-        if (this.lastAction !== this.currentAction) {
-            this.lastAction.fadeOut(duration);
+    crossFade(name, duration)
+    {
+        this.setAction(name);
+
+        if (this.lastAction) {
+            this.currentAction.time = 0.0;
+            this.currentAction.enabled = true;
+            this.currentAction.setEffectiveTimeScale(1.0);
+            this.currentAction.setEffectiveWeight(1.0);
+            this.currentAction.crossFadeFrom(this.lastAction, duration, false);
         }
 
-        this.currentAction
-            .reset()
-            .setEffectiveTimeScale(1)
-            .setEffectiveWeight(1)
-            .fadeIn(duration)
-            .play();
+        this.currentAction.play();
     }
 }
 

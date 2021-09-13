@@ -1,9 +1,8 @@
-import { AmbientLight, CameraHelper, Clock, Color, DirectionalLight, PerspectiveCamera, PointLight, PointLightHelper, Scene, SkeletonHelper, SpotLight, Vector2, WebGLRenderer} from "three";
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { AmbientLight, Clock, Color, PerspectiveCamera, PointLight, Scene, WebGLRenderer} from "three";
+
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import { Chat } from "./chat/chat";
-// import * as TWEEN from '@tweenjs/tween.js';
 import { Terrain } from "./terrain";
 
 import Stats from 'three/examples/jsm/libs/stats.module.js';
@@ -30,7 +29,7 @@ const models = {
     player: { url: "chibi-character.glb" },
 };
 
-async function load_gltf(scene)
+async function load_gltf()
 {
     const loader = new GLTFLoader();
     loader.setPath("../assets/gltf/");
@@ -62,9 +61,6 @@ async function main()
     window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(5, 25, 30);
 
-    // const controls = new OrbitControls(camera, container);
-    // controls.enableDamping = true;
-
     // resize
     setSize(camera, renderer, gameContainer);
     window.addEventListener('resize', () => {
@@ -91,7 +87,7 @@ async function main()
     document.body.appendChild(stats.dom);
 
     // load
-    await load_gltf(scene);
+    await load_gltf();
 
     // input
     InputManager.init(gameContainer);
@@ -118,7 +114,6 @@ async function main()
         requestAnimationFrame(animate);
 
         const dt = clock.getDelta() * speed;
-        // TWEEN.update();
 
         // focus chat
         if (InputManager.keyPressed("focus-chat")) {
@@ -134,23 +129,6 @@ async function main()
 
         // player manager
         playerManager.update(dt);
-
-        if (terrain.mouseIntersect.active) {
-            const intersect = terrain.mouseIntersect;
-            const point = intersect.point;
-            const normal = intersect.normal;
-            const tileX = intersect.tileX;
-
-            const tileY = intersect.tileY;
-
-            // const quat = new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), normal);
-            // cube.setRotationFromQuaternion(quat);
-            // cube.position.x = tileX * terrain.tileWidth - terrain.width / 2 + terrain.tileWidth / 2;
-            // cube.position.z = tileY * terrain.tileHeight - terrain.height / 2 + terrain.tileHeight / 2;
-
-            // cube.position.copy(point);
-            // cube.position.y = cube.geometry.parameters.height / 2;
-        }
 
         // camera
         thirdPersonCamera.update(dt, player);
