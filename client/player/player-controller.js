@@ -68,25 +68,30 @@ class WalkState extends State {
     transition()
     {
         const lastState = this.parent.lastState.name;
-        switch (lastState) {
-            case "idle":
-                this.data.player.crossFade("Walk", 0.3);
-                return true;
-            case "running":
-                this.data.player.crossFade("Walk", 0.5);
-                return true;
+        var time = 0;
+
+        if (lastState === "idle") time = 0.3;
+        if (lastState === "running") time = 0.2;
+
+        if (time != 0) {
+            this.data.player.crossFade("Walk", time);
+            this.data.controller.speed = 20;
+            return true;
         }
     }
 
     update(dt)
     {
         const controller = this.data.controller;
+        const lastAction = this.data.player.lastAction;
         // is stopped
         if (controller.velocity.length() < 0.01)
             this.parent.setState("idle");
         // is running
-        if (InputManager.keyDown("player-run"))
+        if (InputManager.keyDown("player-run") && !lastAction.enabled) {
             this.parent.setState("running");
+        }
+        
     }
 }
 
@@ -94,21 +99,23 @@ class RunState extends State {
     transition()
     {
         const lastState = this.parent.lastState.name;
-        switch (lastState) {
-            case "walking":
-                this.data.player.crossFade("GoofyRun", 1.0);
-                return true;
+
+        if (lastState === "walking") {
+            this.data.player.synchronizedCrossFade("GoofyRun", 0.3);
+            this.data.controller.speed = 30;
+            return true;
         }
     }
 
     update(dt)
     {
         const controller = this.data.controller;
+        const lastAction = this.data.player.lastAction;
         // is stopped
         if (controller.velocity.length() < 0.01)
             this.parent.setState("idle");
         // is running
-        if (!InputManager.keyDown("player-run"))
+        if (!InputManager.keyDown("player-run") && !lastAction.enabled)
             this.parent.setState("walking");
     }
 };

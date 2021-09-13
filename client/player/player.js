@@ -67,19 +67,29 @@ class Player extends Group {
         this.currentAction = this.actions[name];
     }
 
-    crossFade(name, duration)
+    crossFade(name, duration, warp = false)
     {
         this.setAction(name);
 
         if (this.lastAction) {
-            this.currentAction.time = 0.0;
             this.currentAction.enabled = true;
             this.currentAction.setEffectiveTimeScale(1.0);
             this.currentAction.setEffectiveWeight(1.0);
-            this.currentAction.crossFadeFrom(this.lastAction, duration, false);
+            this.currentAction.crossFadeFrom(this.lastAction, duration, warp);
         }
 
         this.currentAction.play();
+    }
+
+    synchronizedCrossFade(name, duration, warp = false)
+    {
+        this.crossFade(name, duration, warp);
+        if (this.lastAction) {
+            const duration = this.currentAction.getClip().duration;
+            const lastDuration = this.lastAction.getClip().duration;
+            const ratio = duration / lastDuration;
+            this.currentAction.time = this.lastAction.time * ratio;
+        }
     }
 }
 
