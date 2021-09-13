@@ -1,4 +1,4 @@
-import { AmbientLight, Clock, Color, PerspectiveCamera, PointLight, Scene, WebGLRenderer} from "three";
+import { AmbientLight, Clock, Color, PerspectiveCamera, PointLight, Scene, sRGBEncoding, WebGLRenderer} from "three";
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
@@ -6,10 +6,9 @@ import { Chat } from "./chat/chat";
 import { Terrain } from "./terrain";
 
 import Stats from 'three/examples/jsm/libs/stats.module.js';
-import { PlayerController } from "./player/player-controller";
 import { InputManager } from "./input/input";
 import { ThirdPersonCamera } from "./player/third-person-camera";
-import { Player } from "./player/player";
+import { Player, PlayerController } from "./player/player";
 import { PlayerManager } from "./player-manager";
 import { NetworkManager } from "./network/network-manager";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
@@ -22,7 +21,7 @@ function setSize(camera, renderer, container)
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(2);
 }
 
 const models = {
@@ -48,10 +47,12 @@ async function load_gltf()
 async function main() 
 {
     // renderer
-    const renderer = new WebGLRenderer();
+    const renderer = new WebGLRenderer({powerPreference: "high-performance"});
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.physicallyCorrectLights = true;
     renderer.shadowMap.enabled = true;
+    renderer.outputEncoding = sRGBEncoding;
+    renderer.setPixelRatio(1);
     gameContainer.appendChild(renderer.domElement);
 
     // scene & window
@@ -94,8 +95,8 @@ async function main()
 
     // player controller
     const player = new Player();
-    scene.add(player);
     const playerController = new PlayerController(player);
+    scene.add(player);
 
     // players manager
     const playerManager = new PlayerManager(scene);
@@ -113,6 +114,7 @@ async function main()
     const animate = () => {
         requestAnimationFrame(animate);
 
+
         const dt = clock.getDelta() * speed;
 
         // focus chat
@@ -125,6 +127,8 @@ async function main()
 
         // player controller
         playerController.update(dt);
+        // playerController.update(dt);
+        // playerAnimController.update(dt);
         NetworkManager.sendPlayerInfo(player);
 
         // player manager

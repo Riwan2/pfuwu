@@ -51,7 +51,7 @@ class ThirdPersonCamera {
             angleYOffset = this.angleY;
         }
 
-        nextDistance = this.distance - mouse.scroll * dt;
+        nextDistance = this.distance + mouse.scroll * dt;
         this.distance = clamp(nextDistance, minDistance, maxDistance);
 
         this.angleAround = lerp(this.angleAround, nextAngleAround, angleAroundDamping);

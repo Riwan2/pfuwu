@@ -38,20 +38,6 @@ class StateMachine {
         this.currentState = { name: null };
     }
 
-    /**
-     * 
-     * @param {String} name 
-     * @param {*} transition - The transition function
-     * 
-     * The transition function must return true if the conditions for the
-     * state transition are ok. 
-     * 
-     * SetState give the parent machine states as parameters 
-     * for the transition function.
-     * 
-     * @param {*} obj - obj containing data or logic needed for
-     * the transition function
-     */
     addState(name, type, data)
     {
         if (this.states[name]) {
@@ -68,26 +54,22 @@ class StateMachine {
     setState(name)
     {
         const state = this.states[name];
-
         // state doesn't exist ?
         if (!state) {
-            console.error("state doesn't exist:", name);
+            // console.error("state doesn't exist:", name);
             return;
         }
-        
         // last state equal to current state ?
         this.lastState = this.currentState;
         if (this.lastState.name === name) {
-            console.error("current state equal to last state:", name);
+            // console.error("current state equal to last state:", name);
             return
         }
-
         // transition failed ?
         if (!state.transition()) {
-            console.error("state transition refused:", state);
+            // console.error("state transition refused:", state);
             return;
         }
-
         // success, state updated
         this.currentState = state;
     }

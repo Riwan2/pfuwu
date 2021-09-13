@@ -26,6 +26,7 @@ class Terrain extends Mesh {
         initPlane(this, width, height, resWidth, resHeight);
 
         this.material = new MeshStandardMaterial({color: new Color("white")});
+        this.material.color.convertSRGBToLinear();
         this.rotation.set(-Math.PI / 2, 0, 0);
 
         const wireframe = new WireframeGeometry(this.geometry);
