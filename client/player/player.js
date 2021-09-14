@@ -7,6 +7,9 @@ import { State, StateMachine } from "../animation/state-machine";
 
 class Player extends Group {
     animControl;
+    stateMachine;
+    isMoving;
+    isRunning;
 
     constructor()
     {
@@ -14,18 +17,33 @@ class Player extends Group {
 
         const gltf = models["player"].gltf;
         this.scene = new SkeletonUtils.clone(gltf.scene);
-        this.animControl = new PlayerAnimController(this.scene, gltf.animations);
+        this.animControl = new AnimController(this.scene, gltf.animations);
+
+        this.isMoving = false;
+        this.isRunning = false;
+        
+        this._initStates();
         this._initMesh();
     }
 
     update(dt)
     {
+        this.stateMachine.update(dt);
         this.animControl.update(dt);
     }
 
     /*
         Init
     */
+
+    _initStates()
+    {
+        this.stateMachine = new StateMachine();
+        this.stateMachine.addState("idle", IdleState, this);
+        this.stateMachine.addState("walking", WalkState, this);
+        this.stateMachine.addState("running", RunState, this);
+        this.stateMachine.setState("idle");
+    }
 
     _initMesh()
     {
@@ -60,44 +78,11 @@ class PlayerController {
 
     update(dt)
     {
-        this.player.animControl.isMoving = this.controller.isMoving;
-        this.player.animControl.isRunning = this.controller.isRunning;
+        this.player.isMoving = this.controller.isMoving;
+        this.player.isRunning = this.controller.isRunning;
 
         this.controller.update(dt);
         this.player.update(dt);
-    }
-}
-
-/*
-    Player animation controller
-*/
-
-class PlayerAnimController extends AnimController {
-    isMoving;
-    isRunning;
-
-    /**
-     * 
-     * @param {Player} player 
-     */
-    constructor(animObject, animations)
-    {
-        super(animObject, animations);
-
-        this.isMoving = false;
-        this.isRunning = false;
-        
-        this.stateMachine = new StateMachine();
-        this.stateMachine.addState("idle", IdleState, this);
-        this.stateMachine.addState("walking", WalkState, this);
-        this.stateMachine.addState("running", RunState, this);
-        this.stateMachine.setState("idle");
-    }
-
-    update(dt)
-    {
-        super.update(dt);
-        this.stateMachine.update(dt);
     }
 }
 
@@ -110,8 +95,9 @@ export { Player, PlayerController };
 class IdleState extends State {
     transition()
     {
-        if (this.data.lastAction && this.data.lastAction.enabled) return false;
-        this.data.crossFade("TPose", 0.5);
+        const animControl = this.data.animControl;
+        if (animControl.lastAction && animControl.lastAction.enabled) return false;
+        animControl.crossFade("TPose", 0.5);
         return true;
     }
      
@@ -127,7 +113,8 @@ class IdleState extends State {
 class WalkState extends State {
     transition()
     {
-        if (this.data.lastAction && this.data.lastAction.enabled) return false;
+        const animControl = this.data.animControl;
+        if (animControl.lastAction && animControl.lastAction.enabled) return false;
         const lastState = this.parent.lastState.name;
         var time = 0;
 
@@ -135,7 +122,7 @@ class WalkState extends State {
         if (lastState === "running") time = 0.7;
 
         if (time != 0) {
-            this.data.crossFade("Walk", time);
+            animControl.crossFade("Walk", time);
             return true;
         }
     }
@@ -154,11 +141,12 @@ class WalkState extends State {
 class RunState extends State {
     transition()
     {
-        if (this.data.lastAction && this.data.lastAction.enabled) return false;
+        const animControl = this.data.animControl;
+        if (animControl.lastAction && animControl.lastAction.enabled) return false;
         const lastState = this.parent.lastState.name;
 
         if (lastState === "walking") {
-            this.data.synchroCrossFade("GoofyRun", 0.3);
+            animControl.synchroCrossFade("GoofyRun", 0.3);
             return true;
         }
     }
