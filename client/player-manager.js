@@ -1,111 +1,85 @@
-import { BoxGeometry, Color, InstancedMesh, Matrix4, MeshStandardMaterial, Scene, StreamDrawUsage, Vector3 } from "three";
-import { CharacterController } from "./animation/character-controller";
 import { NetworkManager } from "./network/network-manager";
 import { Player } from "./player/player";
 
-/**
- * @type {InstancedMesh}
- */
-var instancedMesh;
-var maxPlayersNumber;
-
 class PlayerManager {
+    nbPlayers;
+    lastNbPlayers;
+    maxNbPlayers;
 
-    /**
-     * 
-     * init instanced mesh
-     * @param {Scene} scene 
-     * @param {*} numberOfPlayers
-     */
+    players;
+
     constructor(scene, playersNumber = 20)
     {
-        maxPlayersNumber = playersNumber;
-        initInstancedMesh();
-        scene.add(instancedMesh);
+        this.maxNbPlayers = playersNumber;
+        this.nbPlayers = 0;
+        this.lastNbPlayers = this.nbPlayers;
+
+        this.players = [];
+
+        for (let i = 0; i < this.maxNbPlayers; i++) {
+            const player = new Player();
+            player.matrixAutoUpdate = false;
+            player.visible = false;
+
+            scene.add(player);
+            this.players.push(player);
+        }
 
         this.scene = scene;
-        
-        // this.players = []
-        // for (let i = 0; i < playersNumber; i++) {
-            // this.players.push(this.createPlayer());
-        // }
-    }
-
-    createPlayer()
-    {
-        // const playerObject = new Player();
-        // const controller = new CharacterController(playerObject);
-        // const playerController = new PlayerAnimController(playerObject);
-
-        // playerObject.visible = false;
-        // playerObject.matrixAutoUpdate = false;
-
-        // const player = { player: playerObject, controller: controller, playerController: playerController };
-        // this.scene.add(player.player);
-        // return player;
     }
 
     /**
      * 
-     * Update players position and rotation based of server input
+     * Update players position and rotation based on server input
      * @param {*} dt 
      */
     update(dt)
     {
-        // number of instances renderered, can't exceed maxPlayersNumber
-        const nbPlayers = Math.min(NetworkManager.players.length, maxPlayersNumber);
-        instancedMesh.count = nbPlayers;
+        // number of instances renderered, can't exceed maxNbPlayers
+        this.lastNbPlayers = this.nbPlayers;
+        this.nbPlayers = NetworkManager.players.length;
 
-        if (nbPlayers == 0) return;
-
-        // for (let i = 0; i < maxPlayersNumber; i++) {
-
-        //     const player = this.players[i];
-        //     const obj = player.player;
-
-        //     if (i < nbPlayers) {
-        //         const playerData = NetworkManager.players[i];
-        //         const matrix = playerData.matrix;
-                
-        //         if (matrix) {
-        //             const mat = new Matrix4().fromArray(matrix.elements);
-        //             obj.matrix.copy(mat);
-        //             obj.visible = true;
-        //         }
-                
-        //         player.controller.move(new Vector3(0.1, 0.1, 0.1));
-        //         player.playerController.update(dt);
-        //     } else {
-        //         obj.visible = false;
-        //     }
-        // }
-        
-        // populate instanced mesh matrices
-        for (let i = 0; i < nbPlayers; i++) {
-            const playerData = NetworkManager.players[i];
-            const matrix = playerData.matrix;
-            if (matrix) {
-                const mat = new Matrix4().fromArray(matrix.elements);
-                instancedMesh.setMatrixAt(i, mat);
-            }
+        if (this.nbPlayers > this.maxNbPlayers) {
+            this.nbPlayers = this.maxNbPlayers;
+            console.error("number max of players: ", this.maxNbPlayers);
         }
 
-        // update the instance matrix buffer
-        instancedMesh.instanceMatrix.needsUpdate = true;
-    }
-}
+        if (this.nbPlayers == 0 && this.lastNbPlayers == 0) {
+            // console.error("0 players on the server!");
+            return;
+        }
 
-/**
- * 
- * @param {InstancedMesh} mesh 
- * @param {*} numberOfInstance 
- */
-function initInstancedMesh()
-{
-    const geometry = new BoxGeometry(2, 5);
-    const material = new MeshStandardMaterial({color: new Color("red")});
-    instancedMesh = new InstancedMesh(geometry, material, maxPlayersNumber);
-    instancedMesh.instanceMatrix.setUsage(StreamDrawUsage);
+        for (let i = 0; i < this.lastNbPlayers; i++) {
+            // i < maxNbPlayers
+            const player = this.players[i];
+
+            if (i < this.nbPlayers) {
+                // handle logic and make visible server players
+                const networkData = NetworkManager.players[i];
+                const position = networkData.position;
+                const rotation = networkData.rotation;
+                const isMoving = networkData.isMoving;
+                const isRunning = networkData.isRunning;
+
+                // update position
+                player.position.copy(position);
+                player.rotation.copy(rotation);
+
+                // update player
+                player.isMoving = isMoving;
+                player.isRunning = isRunning;
+                player.updateMatrix();
+                player.update(dt);
+
+                // render player
+                player.visible = true;
+
+            } else {
+                // don't render this player object anymore
+                player.visible = false;
+            }
+        }
+    }
 }
 
 export { PlayerManager };

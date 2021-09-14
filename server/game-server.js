@@ -1,4 +1,3 @@
-const { Socket } = require("socket.io");
 const { io } = require("..");
 
 const eStressTest = "stress-test";
@@ -10,7 +9,7 @@ const eStressTest = "stress-test";
 const eUserConnect = "user-connect";
 const eUserDisconnect = "user-disconnect";
 const eChatMessage = "chat-message";
-const ePlayersMove = "players-move"
+const ePlayersInfo = "players-info";
 
 /*
     Game server
@@ -33,9 +32,9 @@ class GameServer {
         delete this.players[socketId];
     }
 
-    static handlePlayerMove(socketId, event)
+    static handlePlayerInfo(socketId, data)
     {
-        this.players[socketId] = event;
+        this.players[socketId] = data;
     }
 
     /*
@@ -44,7 +43,7 @@ class GameServer {
 
     static update()
     {
-        io.emit(ePlayersMove, this.players);
+        io.emit(ePlayersInfo, this.players);
     }
 }
 
@@ -73,10 +72,10 @@ io.on("connection", socket => {
         io.emit(eStressTest);
     })
 
-    // player pos
-    socket.on(ePlayersMove, (event) => {
-        GameServer.handlePlayerMove(socket.id, event);
-    })
+    // player info
+    socket.on(ePlayersInfo, (data) => {
+        GameServer.handlePlayerInfo(socket.id, data);
+    });
 
 });
 

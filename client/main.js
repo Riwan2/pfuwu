@@ -113,30 +113,28 @@ async function main()
 
     const animate = () => {
         requestAnimationFrame(animate);
-
-
+        
+        // delta time
         const dt = clock.getDelta() * speed;
 
         // focus chat
-        if (InputManager.keyPressed("focus-chat")) {
+        if (InputManager.keyPressed("focus-chat"))
             Chat.focus();
-        }
 
         // controls.update(dt);
         terrain.mouseRaycast(camera);
 
         // player controller
         playerController.update(dt);
-        // playerController.update(dt);
-        // playerAnimController.update(dt);
         NetworkManager.sendPlayerInfo(player);
 
-        // player manager
+        // players manager
         playerManager.update(dt);
 
         // camera
         thirdPersonCamera.update(dt, player);
 
+        // render scene
         renderer.render(scene, camera);
 
         stats.update();
