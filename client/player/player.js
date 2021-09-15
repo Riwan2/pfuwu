@@ -5,6 +5,10 @@ import { InputCharacterController } from "../animation/character-controller";
 import { models } from "../main";
 import { State, StateMachine } from "../animation/state-machine";
 
+import * as Shared from "../../shared/test";
+
+Shared.hello();
+
 class Player extends Group {
     animControl;
     stateMachine;

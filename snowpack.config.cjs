@@ -25,6 +25,8 @@ module.exports = {
   },
   exclude: [ 
     "**/client/network/stress-test.js",
+    "**/index.js",
+    "**/server/**",
     "**/build/**",
     "**/node_modules/**"
   ]

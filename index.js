@@ -1,21 +1,25 @@
-
-const path = require('path');
-const express = require('express');
+import path from 'path';
+import express from 'express';
 
 // express app creation
 const app = express();
-const http = require('http');
+import http from 'http';
 
 // http server creation
 const httpServer = http.createServer(app);
-const { Server } = require("socket.io");
+import { Server } from "socket.io";
 
 // socket.io server initialisation
-module.exports.io = new Server(httpServer, {
+const io = new Server(httpServer, {
     cors: {
         origin: "*"
     },
 });
+
+// __dirname
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // deliver content to client
 app.use(express.static(__dirname));
@@ -30,9 +34,10 @@ httpServer.listen(port, () => {
 });
 
 // game server
-const { GameServer } = require('./server/game-server.js');
+import { GameServer } from "./server/game-server.js";
 const tickRate = 20;
+const gameServer = new GameServer(io);
 
 setInterval(() => {
-    GameServer.update();
+    gameServer.update();
 }, tickRate);

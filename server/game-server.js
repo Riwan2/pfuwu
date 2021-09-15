@@ -1,5 +1,3 @@
-const { io } = require("..");
-
 const eStressTest = "stress-test";
 
 /*
@@ -11,28 +9,40 @@ const eUserDisconnect = "user-disconnect";
 const eChatMessage = "chat-message";
 const ePlayersInfo = "players-info";
 
+import * as shared from "../shared/test.js";
+shared.hello();
+// shared.hello();
+
 /*
     Game server
 */
 
 class GameServer {
-    static players = {};
+    players = {};
+
+    constructor(io)
+    {
+        this.io = io;
+        this.io.on("connection", (socket) => {
+            wrapIo(io, socket, this);
+        });
+    }
 
     /*
         handle events
     */
 
-    static handleConnect(socketId)
+    handleConnect(socketId)
     {
         this.players[socketId] = {};
     }
 
-    static handleDisconnect(socketId)
+    handleDisconnect(socketId)
     {
         delete this.players[socketId];
     }
 
-    static handlePlayerInfo(socketId, data)
+    handlePlayerInfo(socketId, data)
     {
         this.players[socketId] = data;
     }
@@ -41,9 +51,9 @@ class GameServer {
         update
     */
 
-    static update()
+    update()
     {
-        io.emit(ePlayersInfo, this.players);
+        this.io.emit(ePlayersInfo, this.players);
     }
 }
 
@@ -51,15 +61,15 @@ class GameServer {
     handle events
 */
 
-io.on("connection", socket => {
+function wrapIo(io, socket, server) {
 
     io.emit(eUserConnect, { id: socket.id });
-    GameServer.handleConnect(socket.id);
+    server.handleConnect(socket.id);
 
     // disconnect
     socket.on("disconnect", () => {
         io.emit(eUserDisconnect, { id: socket.id });
-        GameServer.handleDisconnect(socket.id);
+        server.handleDisconnect(socket.id);
     })
     
     // chat message
@@ -74,9 +84,9 @@ io.on("connection", socket => {
 
     // player info
     socket.on(ePlayersInfo, (data) => {
-        GameServer.handlePlayerInfo(socket.id, data);
+        server.handlePlayerInfo(socket.id, data);
     });
 
-});
+}
 
-module.exports = { GameServer }
+export { GameServer };

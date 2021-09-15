@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js",
-    "build": "snowpack build",
+    "build": "snowpack build && cp index.js build/index.js && cp -R server build/server && cp -R shared build/shared",
     "dev": "snowpack dev"
   },
   "author": "Riwan",
