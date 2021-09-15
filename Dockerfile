@@ -6,6 +6,7 @@ WORKDIR /usr/src/app
 COPY client/ client/
 COPY assets/ assets/
 COPY server/ server/
+COPY shared/ shared/
 COPY styles/ styles/
 COPY index.html .
 COPY index.js .
