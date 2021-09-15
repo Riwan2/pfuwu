@@ -11,7 +11,7 @@ COPY index.html .
 COPY index.js .
 COPY package-lock.json .
 COPY package.json .
-COPY snowpack.config.js .
+COPY snowpack.config.cjs .
 
 RUN ls
 RUN npm ci
