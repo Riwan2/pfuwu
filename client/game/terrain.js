@@ -1,5 +1,5 @@
 import { Color, LineBasicMaterial, LineSegments, Mesh, MeshStandardMaterial, PlaneGeometry, Raycaster, Vector3, WireframeGeometry } from "three";
-import { InputManager } from "./input/input";
+import { InputManager } from "../input/input";
 
 class MouseIntersect 
 {

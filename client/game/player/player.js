@@ -2,10 +2,10 @@ import { Color, Group, MeshStandardMaterial } from "three";
 import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils';
 import { AnimController } from "../animation/anim-controller";
 import { InputCharacterController } from "../animation/character-controller";
-import { models } from "../main";
 import { State, StateMachine } from "../animation/state-machine";
 
-import * as Shared from "../../shared/test";
+import * as Shared from "../../../shared/test";
+import { models } from "../world";
 
 Shared.hello();
 

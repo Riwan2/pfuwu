@@ -1,6 +1,6 @@
 import { Object3D, PerspectiveCamera, Vector3 } from "three";
 import { clamp, lerp } from "three/src/math/MathUtils";
-import { InputManager } from "../input/input";
+import { InputManager } from "../../input/input";
 
 const angleAroundSpeed = 3;
 const angleAroundDamping = 0.1;
@@ -39,7 +39,6 @@ class ThirdPersonCamera {
     update(dt, target)
     {
         var rotationY = target.rotation.y + this.angleAround + Math.PI;
-
         const mouse = InputManager.mouse;
 
         if (mouse.down) {

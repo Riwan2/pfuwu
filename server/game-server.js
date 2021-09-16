@@ -11,7 +11,6 @@ const ePlayersInfo = "players-info";
 
 import * as shared from "../shared/test.js";
 shared.hello();
-// shared.hello();
 
 /*
     Game server

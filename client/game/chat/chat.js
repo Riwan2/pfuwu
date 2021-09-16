@@ -2,7 +2,8 @@
     chat
 */
 
-import { gameContainer } from "../main";
+import { InputManager } from "../../input/input";
+import { gameWorld, focusGame } from "../../main";
 import { ChatNetwork } from "../network/chat-network";
 
 const textInput = document.getElementById("message-text");
@@ -46,6 +47,14 @@ class Chat {
     static focus()
     {
         textInput.focus();
+        InputManager.blockInputTag("player", true);
+    }
+
+    static unfocus()
+    {
+        textInput.blur();
+        focusGame();
+        InputManager.blockInputTag("player", false);
     }
 
     static scrollDown()
@@ -61,33 +70,35 @@ function appendMessage(msg)
     Chat.scrollDown();
 }
 
-function focusGame()
-{
-    textInput.blur();
-    gameContainer.focus();
+textInput.onclick = () => {
+    Chat.focus();
 }
 
 textInput.onkeydown = (event) => {
     const length = textInput.innerText.length;
     const isFull = length > 120;
 
-    textInput.style.overflow = "hidden";
+    Chat.inputEmpty = false;
+    if (length <= 0) Chat.inputEmpty = true;
 
-    if (event.code == "Tab") {
-        focusGame();
-        event.preventDefault();
+    if (event.key === 'Tab') {
+        Chat.unfocus();
+        return;
     }
 
-    if (event.key == 'Enter') {
+    textInput.style.overflow = "hidden";
+
+    if (event.key === 'Enter') {
         event.preventDefault();
 
         if (length <= 0) {
-            focusGame();
+            Chat.unfocus();
             return;
         }
 
         ChatNetwork.send(textInput.textContent);
         textInput.textContent = "";
+
         return;
     }
 

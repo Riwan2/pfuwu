@@ -1,14 +1,37 @@
 body {
     /* remove margins and scroll bars */
-    margin: 0;
-    /* overflow: hidden; */
-    background-color: cadetblue;
+    margin: 0px;
+    overflow: hidden;
+    background-color: aquamarine;
+}
+
+#root {
+    visibility: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.App {
+    visibility: visible;
+    width: 50%;
+    background-color: red;
+}
+
+.App p {
+    margin: 0px;
+}
+
+.App:hover {
+    background-color: blue;
 }
 
 #threejs-canvas {
     /* canvas take up full page */
     position: absolute;
     background-color: skyblue;
+    z-index: 0;
     height: 100%;
     width: 100%;
 }

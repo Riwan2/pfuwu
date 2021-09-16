@@ -1,5 +1,5 @@
 import { Vector3, Object3D } from "three";
-import { InputManager } from "../input/input";
+import { InputManager } from "../../input/input";
 
 /*
     Basic character controller
@@ -118,15 +118,15 @@ class CharacterController {
 */
 
 // move
-InputManager.registerInput("player-up", [ "KeyW", "ArrowUp" ]);
-InputManager.registerInput("player-down", [ "KeyS", "ArrowDown" ]);
-InputManager.registerInput("player-right", [ "KeyD", "ArrowRight" ]);
-InputManager.registerInput("player-left", [ "KeyA", "ArrowLeft" ]);
+InputManager.registerInput("player-up", [ "KeyW", "ArrowUp" ], "player");
+InputManager.registerInput("player-down", [ "KeyS", "ArrowDown" ], "player");
+InputManager.registerInput("player-right", [ "KeyD", "ArrowRight" ], "player");
+InputManager.registerInput("player-left", [ "KeyA", "ArrowLeft" ], "player");
 // turn
-InputManager.registerInput("player-turn-right", [ "KeyQ" ]);
-InputManager.registerInput("player-turn-left", [ "KeyE" ]);
+InputManager.registerInput("player-turn-right", [ "KeyQ" ], "player");
+InputManager.registerInput("player-turn-left", [ "KeyE" ], "player");
 // run
-InputManager.registerInput("player-run", [ "ShiftLeft" ]);
+InputManager.registerInput("player-run", [ "ShiftLeft" ], "player");
 
 class InputCharacterController extends CharacterController {
     constructor(object3D) 

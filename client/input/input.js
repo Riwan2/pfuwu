@@ -18,22 +18,47 @@ class InputManager
 
     static init(container)
     {
-        container.addEventListener("keydown", handleKeyDown, false);
-        container.addEventListener("keyup", handleKeyUp, false);
+        window.addEventListener("keydown", handleKeyDown, false);
+        window.addEventListener("keyup", handleKeyUp, false);
+        window.addEventListener("focusout", this.#resetInput, false);
         container.addEventListener("mousemove", (event) => { handleMouseMove(event, container) }, false);
         container.addEventListener("mousedown", handleMouseDown, false);
         container.addEventListener("mouseup", handleMouseUp, false);
         container.addEventListener("mouseout", handleMouseOut, false);
-        container.addEventListener("wheel", handleMouseScroll, false);
+        container.addEventListener("wheel", handleMouseScroll, { passive: false });
     }
 
-    static registerInput(name, keyAlias, preventDefault = false)
+    static #resetInput()
+    {
+        for (const key in inputMap) {
+            const input = inputMap[key];
+            input.down = false;
+        }
+    }
+
+    static registerInput(name, keyAlias, tag = "basic", preventDefault = false)
     {
         for (const key in inputMap) {
             if (key === name)
                 throw Error("input already registered", name);
         }
-        inputMap[name] = { "keyAlias": keyAlias, "down": false, "preventDefault": preventDefault };
+        
+        inputMap[name] = { 
+            "keyAlias": keyAlias, 
+            "down": false, 
+            "preventDefault": preventDefault,
+            "tag": tag,
+            "blocked": false,
+        };
+    }
+
+    static blockInputTag(name, blocked = true)
+    {
+        for (const key in inputMap) {
+            const input = inputMap[key];
+            if (input.tag === name)
+                input.blocked = blocked;
+        }
     }
 
     static keyDown(inputName)
@@ -113,6 +138,7 @@ function handleKeyDown(event)
         const input = inputMap[key];
         for (const code of input.keyAlias) {
             if (event.code == code) {
+                if (input.blocked) return;
                 if (input.preventDefault) event.preventDefault();
                 input.down = true;
                 return;
@@ -129,7 +155,7 @@ function handleKeyUp(event)
         const input = inputMap[key];
         for (const code of input.keyAlias) {
             if (event.code == code) {
-                if (input.preventDefault) event.preventDefault();
+                if (input.blocked) return;
                 input.down = false;
                 return;
             }
