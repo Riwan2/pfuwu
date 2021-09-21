@@ -2,12 +2,11 @@ import { AmbientLight, Clock, Color, PerspectiveCamera, PointLight, Scene, sRGBE
 import Stats from "three/examples/jsm/libs/stats.module";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { InputManager } from "../input/input";
-import { NetworkManager } from "./network/network-manager";
-import { PlayerManager } from "./player-manager";
-import { Player, PlayerController } from "./player/player";
-import { ThirdPersonCamera } from "./player/third-person-camera";
-import { Terrain } from "./terrain";
+import { NetworkManager } from "game/network/network-manager";
+import { PlayerManager } from "game/player-manager";
+import { Player, PlayerController } from "game/player/player";
+import { ThirdPersonCamera } from "game/player/third-person-camera";
+import { Terrain } from "game/terrain";
 
 const models = {
     player: { url: "chibi-character.glb" },
@@ -16,7 +15,7 @@ const models = {
 async function load_gltf()
 {
     const loader = new GLTFLoader();
-    loader.setPath("../assets/gltf/");
+    loader.setPath("assets/gltf/");
 
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('three/examples/js/libs/draco/');

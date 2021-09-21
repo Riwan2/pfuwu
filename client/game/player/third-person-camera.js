@@ -1,6 +1,6 @@
 import { Object3D, PerspectiveCamera, Vector3 } from "three";
 import { clamp, lerp } from "three/src/math/MathUtils";
-import { InputManager } from "../../input/input";
+import { InputManager } from "input";
 
 const angleAroundSpeed = 3;
 const angleAroundDamping = 0.1;

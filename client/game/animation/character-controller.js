@@ -1,5 +1,5 @@
 import { Vector3, Object3D } from "three";
-import { InputManager } from "../../input/input";
+import { InputManager } from "input";
 
 /*
     Basic character controller

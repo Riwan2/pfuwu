@@ -1,5 +1,5 @@
-import { Chat } from "../chat/chat";
-import { socket } from "./client";
+import { Chat } from "game/chat/chat";
+import { socket } from "./network";
 
 const eChatMessage = "chat-message";
 

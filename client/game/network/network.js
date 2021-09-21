@@ -1,7 +1,6 @@
-// client part
+// network client part
 import { io } from "socket.io-client/dist/socket.io.js";
-import { Object3D } from "three";
-import { Chat } from "../chat/chat";
+import { Chat } from "game/chat/chat";
 
 var recoMaxTry = 2;
 var recoTry = -1;

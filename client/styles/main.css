@@ -13,20 +13,6 @@ body {
     z-index: 1;
 }
 
-.App {
-    visibility: visible;
-    width: 50%;
-    background-color: red;
-}
-
-.App p {
-    margin: 0px;
-}
-
-.App:hover {
-    background-color: blue;
-}
-
 #threejs-canvas {
     /* canvas take up full page */
     position: absolute;

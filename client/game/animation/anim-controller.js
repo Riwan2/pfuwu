@@ -1,19 +1,6 @@
 import { AnimationMixer } from "three";
 
 class AnimController {
-    /**
-     * @type {AnimationMixer}
-     */
-    mixer;
-    /**
-     * @type {AnimationAction}
-     */
-    currentAction;
-    /**
-     * @type {AnimationAction}
-     */
-    lastAction;
-
     constructor(animObject, animations)
     {
         this.mixer = new AnimationMixer(animObject);
@@ -23,6 +10,9 @@ class AnimController {
             const action = this.mixer.clipAction(clip);
             this.actions[clip.name] = action;
         });
+
+        this.currentAction = this.actions[0];
+        this.lastAction = this.currentAction;
     }
 
     update(dt)

@@ -12,8 +12,15 @@ module.exports = {
     sourcemap: false,
   },
   plugins: [
-    /* ... */
+    '@snowpack/plugin-react-refresh',
   ],
+  alias: {
+    client: "./client",
+    game: "./client/game",
+    input: "./client/game/input/input.js",
+    ui: "./client/ui",
+    shared: "./shared",
+  },
   packageOptions: {
     polyfillNode: true,
   },
@@ -24,7 +31,7 @@ module.exports = {
     /* ... */
   },
   exclude: [ 
-    "**/client/network/stress-test.js",
+    "**/stress-test.js",
     "**/index.js",
     "**/server/**",
     "**/build/**",

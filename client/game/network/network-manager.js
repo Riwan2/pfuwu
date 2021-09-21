@@ -1,7 +1,7 @@
 import { Euler, Vector3 } from "three";
 import { Chat } from "../chat/chat";
 import { Player } from "../player/player";
-import { socket } from "./client";
+import { socket } from "./network";
 
 /*
     Event name

@@ -1,5 +1,5 @@
-import { NetworkManager } from "./network/network-manager";
-import { Player } from "./player/player";
+import { NetworkManager } from "game/network/network-manager";
+import { Player } from "game/player/player";
 
 class PlayerManager {
     nbPlayers;

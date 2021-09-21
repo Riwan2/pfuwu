@@ -2,9 +2,9 @@
     chat
 */
 
-import { InputManager } from "../../input/input";
-import { gameWorld, focusGame } from "../../main";
-import { ChatNetwork } from "../network/chat-network";
+import { InputManager } from "input";
+import { focusGame } from "client/main";
+import { ChatNetwork } from "game/network/chat-network";
 
 const textInput = document.getElementById("message-text");
 const messageList = document.getElementById("message-list");
