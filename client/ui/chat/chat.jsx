@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useRef } from 'react';
-import { InputManager } from '../../game/input/input';
-import { ChatNetwork } from '../../game/network/chat-network';
-import { focusGame } from '../../main';
+import { InputManager } from 'input';
+import { ChatNetwork } from 'game/network/chat-network';
+import { focusGame } from 'client/main';
 
-import { DraggableBar } from '../panel-utils/draggable-bar';
-import { TopLeftResizeButton } from '../panel-utils/topleft-resize-button';
+import { DraggableBar } from 'ui/panel-utils/draggable-bar';
+import { TopLeftResizeButton } from 'ui/panel-utils/topleft-resize-button';
 
 import './chat.css'
 

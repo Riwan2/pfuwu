@@ -1,6 +1,7 @@
-import { Chat } from "game/chat/chat";
+// import { Chat } from "game/chat/chat";
 import { InputManager } from "input";
 import { World } from "game/world";
+import "ui/react"
 
 /* THREE JS */
 const gameContainer = document.getElementById("threejs-canvas");
