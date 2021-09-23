@@ -57,7 +57,8 @@ InputManager.registerInput("chat-focus", ["Tab", "Enter"], "gui", true);
 function swapContext()
 {
     if (InputManager.keyPressed("chat-focus") && !contextChanged) {
-        Chat.focus();
+        window.focusChat();
+        // Chat.focus();
     }
 }
 

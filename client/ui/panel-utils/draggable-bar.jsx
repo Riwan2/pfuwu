@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
 import { getDivOffset, screenDivCollision, useDraggable } from './use-draggable';
 
-function DraggableBar(props) 
+function DraggableBar({ parentRef, className }) 
 {
     const barRef = useRef(null);
-    const parentRef = props.parentRef;
     var offsetX, offsetY;
 
     const initMove = (e) => {
@@ -24,7 +23,7 @@ function DraggableBar(props)
     useDraggable(barRef, initMove, move);
 
     return (
-        <div ref={barRef} className={props.className}></div>
+        <div ref={barRef} className={className} />
     );
 }
 

@@ -1,15 +1,7 @@
 .App {
     visibility: visible;
-    width: 50%;
-    background-color:red;
-    user-select: none;
 }
 
 .App p {
     margin: 0px;
-}
-
-.App:hover {
-    background-color: blue;
-    color: white;
 }

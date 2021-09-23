@@ -2,7 +2,7 @@ body {
     /* remove margins and scroll bars */
     margin: 0px;
     overflow: hidden;
-    background-color: aquamarine;
+    background-color: black;
 }
 
 #root {

@@ -37,19 +37,19 @@ class World {
         this.isRunning = true;
 
         // rendering
-        this.#initRenderer();
-        this.#initScene();
-        this.#initCamera();
+        this._initRenderer();
+        this._initScene();
+        this._initCamera();
 
         // events
-        this.#initEventListeners();
+        this._initEventListeners();
     }
 
     /*
         Init
     */
 
-    #initRenderer()
+    _initRenderer()
     {
         this.renderer = new WebGLRenderer();
         this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
@@ -60,13 +60,13 @@ class World {
         this.container.appendChild(this.renderer.domElement);
     }
 
-    #initScene()
+    _initScene()
     {
         this.scene = new Scene();
         this.scene.background = new Color("cadetblue");
     }
 
-    #initCamera()
+    _initCamera()
     {
         const ratio = this.container.clientWidth / this.container.clientHeight;
         const fov = 75;
@@ -79,7 +79,7 @@ class World {
         Resize
     */
 
-    #resize()
+    _resize()
     {
         const ratio = this.container.clientWidth / this.container.clientHeight;
         this.camera.aspect = ratio;
@@ -92,10 +92,10 @@ class World {
         Event listener
     */
 
-    #initEventListeners()
+    _initEventListeners()
     {
         window.addEventListener('resize', () => {
-            this.#resize();
+            this._resize();
         })
     }
 

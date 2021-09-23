@@ -101,7 +101,7 @@
     padding: 5px;
     padding-left: 7px;
 
-    max-height: 35px;
+    /* max-height: 35px; */
     border-radius: 7px;
 
     background-color: rgba(12, 12, 12, 0.486);

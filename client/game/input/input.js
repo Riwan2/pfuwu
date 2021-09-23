@@ -20,7 +20,7 @@ class InputManager
     {
         window.addEventListener("keydown", handleKeyDown, false);
         window.addEventListener("keyup", handleKeyUp, false);
-        window.addEventListener("focusout", this.#resetInput, false);
+        window.addEventListener("focusout", this._resetInput, false);
         container.addEventListener("mousemove", (event) => { handleMouseMove(event, container) }, false);
         container.addEventListener("mousedown", handleMouseDown, false);
         container.addEventListener("mouseup", handleMouseUp, false);
@@ -28,7 +28,7 @@ class InputManager
         container.addEventListener("wheel", handleMouseScroll, { passive: false });
     }
 
-    static #resetInput()
+    static _resetInput()
     {
         for (const key in inputMap) {
             const input = inputMap[key];
