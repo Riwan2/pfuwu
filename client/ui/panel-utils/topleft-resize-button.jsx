@@ -1,10 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { getDivOffset, useDraggable } from './use-draggable';
 
 function TopLeftResizeButton({ parentRef = null, className = "", 
-    minWidth = 10, minHeight = 10, maxWidth = 1000, maxHeight = 10000 }) 
+    resizeCallback, minWidth = 10, minHeight = 10, maxWidth = 1000, maxHeight = 10000 }) 
 {
     const buttonRef = useRef(null);
+    const [position, setPosition] = useState({x: 0, y: 0});
 
     var offsetX, offsetY;
     var lastTop, lastHeight, lastLeft;
@@ -46,6 +47,8 @@ function TopLeftResizeButton({ parentRef = null, className = "",
         const width = posX - lastLeft;
         if (width > minWidth && width < maxWidth)
             parentDiv.style.width = width + offsetX + 'px';
+
+        if (resizeCallback) resizeCallback();
     };
 
     const stopMove = (e) => {

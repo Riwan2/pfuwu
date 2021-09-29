@@ -1,4 +1,4 @@
-import { Chat } from "game/chat/chat";
+import { Chat } from "ui/chat/chat";
 import { socket } from "./network";
 
 const eChatMessage = "chat-message";
@@ -11,8 +11,8 @@ class ChatNetwork {
 }
 
 // listen to event
-socket.on(eChatMessage, (msg) => {
-    Chat.msgUser(msg.id, msg.content);
+socket.on(eChatMessage, (event) => {
+    Chat.msgUser(event.id, event.content);
 });
 
 export { ChatNetwork };

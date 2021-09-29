@@ -1,7 +1,10 @@
 // import { Chat } from "game/chat/chat";
 import { InputManager } from "input";
 import { World } from "game/world";
+
+/* REACT */
 import "ui/react"
+import { Chat } from "./ui/chat/chat";
 
 /* THREE JS */
 const gameContainer = document.getElementById("threejs-canvas");
@@ -21,6 +24,10 @@ async function main()
 {
     gameWorld = new World(gameContainer);
     await gameWorld.loadGame();
+
+    for (let i = 0; i < 300; i++) {
+        Chat.msgUser('userzdzldpzldpzdzdlzpldpzldpzlpld', i);
+    }
 
     InputManager.init(gameContainer);
     update();
@@ -58,7 +65,7 @@ InputManager.registerInput("chat-focus", ["Tab", "Enter"], "gui", true);
 function swapContext()
 {
     if (InputManager.keyPressed("chat-focus") && !contextChanged) {
-        window.focusChat();
+        Chat.focus();
         // Chat.focus();
     }
 }

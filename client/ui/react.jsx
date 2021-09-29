@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Chat } from "./chat/chat";
+import { ChatComponent } from "./chat/chat";
 
 ReactDOM.render(
     <React.StrictMode>
-        <Chat />
+        <ChatComponent />
     </React.StrictMode>,
     document.getElementById('root'),
 );

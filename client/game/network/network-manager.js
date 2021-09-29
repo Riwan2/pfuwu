@@ -1,5 +1,5 @@
 import { Euler, Vector3 } from "three";
-import { Chat } from "../chat/chat";
+import { Chat } from "ui/chat/chat";
 import { Player } from "../player/player";
 import { socket } from "./network";
 

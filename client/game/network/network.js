@@ -1,6 +1,6 @@
 // network client part
 import { io } from "socket.io-client/dist/socket.io.js";
-import { Chat } from "game/chat/chat";
+import { Chat } from "ui/chat/chat";
 
 var recoMaxTry = 2;
 var recoTry = -1;

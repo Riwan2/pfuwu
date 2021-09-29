@@ -8,14 +8,9 @@ import { TopLeftResizeButton } from 'ui/panel-utils/topleft-resize-button';
 
 import './chat.css'
 
-// id="chat">
-// <ul id="message-list"></ul>
-// <div id="message-text-wrapper">
-//     <div id="message-text" contenteditable="true"></div>
-// </div>
-// </div>
+const Chat = {};
 
-var InputField = function({className}) 
+function InputField({className}) 
 {
     const inputRef = useRef(null);
     var inputDiv;
@@ -24,9 +19,9 @@ var InputField = function({className})
 
     useEffect(() => {
         inputDiv = inputRef.current;
-        inputDiv.addEventListener('click', onFocus);
-        inputDiv.addEventListener('input', onInput);
-        inputDiv.addEventListener('keydown', onKeyDown);
+        inputDiv.onclick = onFocus;
+        inputDiv.oninput = onInput;
+        inputDiv.onkeydown = onKeyDown;
     });
 
     const onFocus = () => {
@@ -34,15 +29,14 @@ var InputField = function({className})
         InputManager.blockInputTag("player", true);
     };
 
-    // gros porc
-    window.focusChat = () => {
+    Chat.focus = () => {
         onFocus();
     }
 
     const quitInput = () => {
         inputDiv.blur();
-        focusGame();
         InputManager.blockInputTag("player", false);
+        focusGame();            
     }
 
     const onInput = (e) => {
@@ -65,7 +59,6 @@ var InputField = function({className})
             } else {
                 // send text to network
                 ChatNetwork.send(inputDiv.textContent);
-                console.log(inputDiv.textContent);
                 inputDiv.textContent = "";
                 length = 0;
             }
@@ -81,22 +74,134 @@ var InputField = function({className})
     );
 }
 
-function Chat() 
+var messageID = 0;
+
+function MessageUsr({msg})
 {
-    const chatDiv = useRef(null);
-
     return (
-        <div ref={chatDiv} className="Chat">
-
-            <div className="TopBar">
-                <DraggableBar parentRef={chatDiv} className="DraggableBar" />
-                <TopLeftResizeButton parentRef={chatDiv} className="TopLeftResizeButton"/>
-            </div>
-
-            <div className="MessagePanel"></div>
-            <InputField className="InputField" />
+        <div className="msg-user">
+            <div className="name"> {"<" + msg.user + ">"} </div>
+            <div> {msg.content} </div>
         </div>
     );
 }
 
-export { Chat };
+function MessageSystem({msg})
+{
+    return (
+        <div className="msg-system">
+            <span> ▻ </span>
+            {msg.content}
+        </div>
+    );
+}
+
+function ChatMessageList({className})
+{
+    const [messages, setMessages] = useState([]);
+    const divRef = useRef(null);
+    const followMsgRef = useRef(true);
+    const lastHeight = useRef(0);
+
+    useEffect(() => {
+        divRef.current.addEventListener('scroll', onScroll);
+        return () => {
+            divRef.current.removeEventListener('scroll', onScroll);
+        }
+    }, [divRef]);
+
+    const checkFollowMessage = () => {
+        const div = divRef.current;
+        const offsetScroll = div.scrollHeight - div.offsetHeight;
+        const messageHeight = div.lastChild.previousSibling.offsetHeight;
+        if (offsetScroll - div.scrollTop <= messageHeight / 2) followMsgRef.current = true;
+        else followMsgRef.current = false;
+    }
+
+    const onScroll = (e) => {
+        checkFollowMessage();
+    }
+
+    const scrollDown = () => {
+        if (followMsgRef.current) {
+            divRef.current.scrollTop = divRef.current.scrollHeight;
+        } else {
+            
+            // when resize, the middle messages are always focused
+            if (lastHeight.current && lastHeight.current !== divRef.current.scrollHeight) {
+                const ratio =  divRef.current.scrollHeight / lastHeight.current;
+                const height = divRef.current.offsetHeight;
+                const offset = (ratio - 1) * (height / 2);
+                divRef.current.scrollTop += offset;
+            }
+            
+            lastHeight.current = divRef.current.scrollHeight;
+        }
+    };
+
+    Chat.scrollDown = scrollDown;
+
+    const createMessage = (content) => {
+        messageID++;
+        return {
+            id: `ides${messageID}`,
+            content: content
+        };
+    };
+
+    const addMessage = (msg) => {
+        setMessages([...messages, msg]);
+        scrollDown();
+    };
+
+    Chat.msgSystem = (content) => {
+        const msg = {
+            ...createMessage(content),
+            type: 'system'
+        };
+        msg.div = <MessageSystem key={msg.id} msg={msg} />;
+        addMessage(msg);
+    };
+
+    Chat.msgUser = (user, content) => {
+        const msg = {
+            ...createMessage(content),
+            type: 'system',
+            user: user
+        };
+        msg.div =  <MessageUsr key={msg.id} msg={msg} />;
+        addMessage(msg);
+    }
+
+    const messageList = messages.map((msg) => {
+        return msg.div;
+    });
+    return (
+        <div ref={divRef} className={className}> {messageList} </div>
+    );
+}
+
+function ChatComponent() 
+{
+    const chatRef = useRef(null);
+
+    const onResize = () => {
+        Chat.scrollDown();
+    }
+
+    return (
+        <div ref={chatRef} className="Chat">
+            <div className="TopBar">
+                <DraggableBar parentRef={chatRef} className="DraggableBar" 
+                    resizeCallback={onResize}/>
+                <TopLeftResizeButton parentRef={chatRef} className="TopLeftResizeButton" 
+                    resizeCallback={onResize}/>
+            </div>
+
+            <ChatMessageList className="message-list no-scrollbar" />
+            <InputField className="input-field no-scrollbar" />
+        </div>
+    );
+}
+
+export { ChatComponent, Chat };
