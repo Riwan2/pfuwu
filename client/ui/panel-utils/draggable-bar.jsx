@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { getDivOffset, screenDivCollision, useDraggable } from './use-draggable';
 
-function DraggableBar({ parentRef, className, resizeCallback }) 
+function DraggableBar({ parentRef, className,
+    moveCallback, moveFinishedCallback }) 
 {
     const barRef = useRef(null);
     var parentDiv;
@@ -13,12 +14,14 @@ function DraggableBar({ parentRef, className, resizeCallback })
         parentDiv = parentRef.current;
         checkAnchor();
         window.addEventListener('resize', stayWindow);
-        return (() => {
+
+        return () => {
             window.removeEventListener('resize', stayWindow);
-        })
+        };
     }, [parentRef])
 
-    // stay in the navigator window with smart anchor
+    // stay in the navigator window with 'smart' anchor
+    // can resize the window
     const stayWindow = () => {
         const bottom = parentDiv.offsetTop + parentDiv.offsetHeight;
         const right = parentDiv.offsetLeft + parentDiv.offsetWidth;
@@ -42,8 +45,6 @@ function DraggableBar({ parentRef, className, resizeCallback })
         }
         // don't go minus window left
         if (parentDiv.offsetLeft < 0) parentDiv.style.left = 0 + 'px';
-
-        if (resizeCallback) resizeCallback();
     };
 
     // init the drag move
@@ -58,7 +59,14 @@ function DraggableBar({ parentRef, className, resizeCallback })
 
         if (screenDivCollision(parentDiv))
             [offsetX, offsetY] = getDivOffset(barRef, parentRef, e.pageX, e.pageY);
+        
+        moveCallback?.();
     };
+
+    const stopMove = (e) => {
+        checkAnchor(e);
+        moveFinishedCallback?.();
+    }
 
     // smart anchor, try to say at user defined position
     const checkAnchor = (e) => {
@@ -89,7 +97,7 @@ function DraggableBar({ parentRef, className, resizeCallback })
     };
     
     // draggable hooks
-    useDraggable(barRef, initMove, move, checkAnchor);
+    useDraggable(barRef, initMove, move, stopMove);
 
     return (
         <div ref={barRef} className={className} />

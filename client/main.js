@@ -25,10 +25,6 @@ async function main()
     gameWorld = new World(gameContainer);
     await gameWorld.loadGame();
 
-    for (let i = 0; i < 300; i++) {
-        Chat.msgUser('userzdzldpzldpzdzdlzpldpzldpzlpld', i);
-    }
-
     InputManager.init(gameContainer);
     update();
 }
@@ -64,10 +60,8 @@ InputManager.registerInput("chat-focus", ["Tab", "Enter"], "gui", true);
 
 function swapContext()
 {
-    if (InputManager.keyPressed("chat-focus") && !contextChanged) {
+    if (InputManager.keyPressed("chat-focus") && !contextChanged)
         Chat.focus();
-        // Chat.focus();
-    }
 }
 
 /*

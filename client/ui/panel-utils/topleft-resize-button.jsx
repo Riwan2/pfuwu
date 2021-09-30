@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { getDivOffset, useDraggable } from './use-draggable';
 
 function TopLeftResizeButton({ parentRef = null, className = "", 
-    resizeCallback, minWidth = 10, minHeight = 10, maxWidth = 1000, maxHeight = 10000 }) 
+    resizeCallback, resizeFinishedCallback,
+    minWidth = 10, minHeight = 10, maxWidth = 1000, maxHeight = 10000 }) 
 {
     const buttonRef = useRef(null);
-    const [position, setPosition] = useState({x: 0, y: 0});
 
     var offsetX, offsetY;
     var lastTop, lastHeight, lastLeft;
@@ -33,10 +33,12 @@ function TopLeftResizeButton({ parentRef = null, className = "",
 
     const move = (e) => {
         const parentDiv = parentRef.current;
+        const div = buttonRef.current;
         const winWidth = window.innerWidth;
 
-        const posY = e.pageY - offsetY < 0 ? 0 : e.pageY;
-        const posX = e.pageX + offsetX > winWidth ? winWidth - offsetX : e.pageX;
+        const posY = e.pageY - offsetY < 0 ? 0 : e.pageY - offsetY;
+        const offset = div.offsetWidth - offsetX;
+        const posX = e.pageX + offset > winWidth ? winWidth : e.pageX + offset;
 
         const height = lastTop + lastHeight - posY;
         if (height > minHeight && height < maxHeight) {
@@ -46,13 +48,14 @@ function TopLeftResizeButton({ parentRef = null, className = "",
 
         const width = posX - lastLeft;
         if (width > minWidth && width < maxWidth)
-            parentDiv.style.width = width + offsetX + 'px';
+            parentDiv.style.width = width + 'px';
 
-        if (resizeCallback) resizeCallback();
+        resizeCallback?.();
     };
 
     const stopMove = (e) => {
         document.body.style.cursor = 'default';
+        resizeFinishedCallback?.();
     }
 
     // draggable hooks
